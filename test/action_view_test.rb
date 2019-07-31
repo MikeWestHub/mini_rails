@@ -36,4 +36,25 @@ class ActionViewTest < Minitest::Test
 
     assert_same template1, template2
   end
+
+  class TestController < ActionController::Base
+    def index
+      @var = "var value"
+    end
+  end
+
+  def test_view_assigns
+    controller = TestController.new
+    controller.index
+
+    assert_equal({ "var" => "var value" }, controller.view_assigns)
+  end
+
+  def test_render
+    request = Rack::MockRequest.new(Rails.application)
+    response = request.get("/posts/show?id=1")
+
+    assert_match "<h1>Blueberry Muffins</h1>", response.body
+    assert_match "<html>", response.body
+  end
 end
